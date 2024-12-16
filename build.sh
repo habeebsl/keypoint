@@ -2,9 +2,6 @@
 
 echo "Starting custom build script"
 
-# Install dependencies
-pip install -r requirements.txt
-
 # Run database migrations (if applicable)
 python manage.py migrate
 
