@@ -1,11 +1,11 @@
 #!/bin/bash
-# Build the project
-echo "Building the project..."
-python -m pip install -r requirements.txt
 
-echo "Make Migration..."
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
+echo "Starting custom build script"
 
-echo "Collect Static..."
-python manage.py collectstatic --noinput --clear
+# Run database migrations (if applicable)
+python manage.py migrate
+
+# Collect static files (if Django is used)
+python manage.py collectstatic --noinput
+
+echo "Build script completed successfully"
