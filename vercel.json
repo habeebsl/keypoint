@@ -1,5 +1,4 @@
 {
-    "buildCommand": "sh vercel.sh", 
     "builds": [{
       "src": "keypoint_project/wsgi.py",
       "use": "@vercel/python",
