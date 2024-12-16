@@ -4,8 +4,7 @@
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "15mb", 
-        "runtime": "python3.12.4", 
-        "buildCommand": "sh vercel.sh"
+        "runtime": "python3.12.4"
       }
     }],
     "routes": [
@@ -14,4 +13,8 @@
         "dest": "keypoint_project/wsgi.py"
       }
     ]
+}
+
+{
+    "buildCommand": "sh vercel.sh"
 }
