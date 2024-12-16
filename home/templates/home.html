@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}KeyPoint{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div id="content" class="analysis-result">{{ highlight|safe }}</div>
+    <div class="input-wrapper">
+        <textarea 
+            id="message-input" 
+            placeholder="Enter text to analyze..." 
+            aria-label="Text input for analysis"
+        ></textarea>
+        <button 
+            id="highlight-button" 
+            class="highlight-btn"
+            aria-describedby="button-description"
+        >
+            Highlight
+        </button>
+        <p id="button-description" class="visually-hidden">
+            Click to analyze and highlight key sentences and words
+        </p>
+    </div>
+</div>
+
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}  
