@@ -20,5 +20,6 @@
         "src": "/(.*)",
         "dest": "keypoint_project/wsgi.py"
       }
-    ]
+    ],
+    "outputDirectory": "staticfiles"
   }
