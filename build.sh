@@ -2,5 +2,5 @@
 # Build the project
 echo "Building the project..."
 mkdir -p /var/task/staticfiles
-pip install -r requirements.txt
-python manage.py collectstatic --noinput
+pip3 install -r requirements.txt
+python3 manage.py collectstatic --noinput
