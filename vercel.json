@@ -5,7 +5,7 @@
       "config": {
         "maxLambdaSize": "15mb", 
         "runtime": "python3.12.4", 
-        "buildCommand": "sh build.sh"
+        "buildCommand": "sh vercel.sh"
       }
     }],
     "routes": [
