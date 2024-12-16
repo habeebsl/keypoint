@@ -15,13 +15,13 @@
       }
     ],
     "routes": [
-      {
-        "src": "/static/(.*)",
-        "dest": "/static/$1"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "keypoint_project/wsgi.py"
-      }
+        {
+            "src": "/static/(.*)",
+            "dest": "staticfiles/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "keypoint_project/wsgi.py"
+        }
     ]
   }
