@@ -63,6 +63,10 @@ def get_response(text):
 		generation_config=generation_config,
 		system_instruction=instructions,
 	)
-	response = model.generate_content(text)
-	print(response.text)
-	return highlight_content(original_text=text, json_response=response.text)
+	
+	try:
+		response = model.generate_content(text)
+		print(response.text)
+		return highlight_content(original_text=text, json_response=response.text)
+	except:
+		return None

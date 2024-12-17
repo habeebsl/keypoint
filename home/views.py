@@ -21,6 +21,8 @@ def get_highlighted_text(request):
         if text:
             response = get_response(text)
             print(response)
+            if not response:
+                return JsonResponse({"error": True})
             request.session["last_highlight"] = response
             return JsonResponse({"highlight": response})
         
