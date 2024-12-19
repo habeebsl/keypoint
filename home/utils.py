@@ -1,8 +1,9 @@
 import json
 import re
-import html
 
+import markdown
 from decouple import config
+from bs4 import BeautifulSoup
 import google.generativeai as genai
 
 genai.configure(api_key=config('GEMINI_API_KEY'))
@@ -15,44 +16,68 @@ generation_config = {
   "response_mime_type": "application/json",
 }
 
+md = markdown.Markdown()
 
-def escape_and_replace(pattern, replacement, text):
-	return re.sub(pattern, lambda m: replacement(m.group(0)), text)
+def remove_markdown_with_spacing(text):
+    html = markdown.markdown(text)
+    soup = BeautifulSoup(html, "html.parser")  
+    for element in soup.find_all(['p', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
+        element.insert_before("\n")
+        element.insert_after("\n")
+
+    return soup.get_text()
+
+def escape_and_replace_in_html(pattern, replacement_func, html_content):
+    soup = BeautifulSoup(html_content, 'html.parser')
+    text_nodes = soup.find_all(text=True)
+    
+    for text_node in text_nodes:
+        if text_node.parent.name in ['code', 'pre']:
+            continue
+
+        original_text = text_node.string
+        if not original_text:
+            continue
+
+        new_text = re.sub(pattern, replacement_func, original_text)
+        if new_text != original_text:
+            text_node.replace_with(BeautifulSoup(new_text, 'html.parser'))
+    
+    return str(soup)
+    
 
 def highlight_content(original_text, json_response):
-	response = json.loads(json_response)
-	text = html.escape(original_text)
+    html_text = md.convert(original_text)
+    response = json.loads(json_response)
+    soup = BeautifulSoup(html_text, 'html.parser')
+    result = html_text
+    
+    for paragraph in response.get("paragraphs", []):
+        pattern = re.escape(paragraph)
+        result = escape_and_replace_in_html(
+            pattern,
+            lambda m: f'<div class="highlight-paragraph">{m.group(0)}</div>',
+            result
+        )
 
-	sentences = response.get("sentences", [])
-	paragraphs = response.get("paragraphs", [])
-	words = response.get("words", [])
+    for sentence in response.get("sentences", []):
+        pattern = re.escape(sentence)
+        result = escape_and_replace_in_html(
+            pattern,
+            lambda m: f'<span class="highlight-sentence">{m.group(0)}</span>',
+            result
+        )
+    
+    for word in response.get("words", []):
+        pattern = rf'\b{re.escape(word)}\b'
+        result = escape_and_replace_in_html(
+            pattern,
+            lambda m: f'<mark class="highlight-word" data-term="{m.group(0)}">{m.group(0)}</mark>',
+            result
+        )
+    
+    return result
 
-
-	for sentence in sentences:
-		sentence_escaped = html.escape(sentence)
-		text = escape_and_replace(
-			re.escape(sentence_escaped), 
-			lambda m: f'<span class="highlight-sentence">{m}</span>', 
-			text
-		)
-
-	for paragraph in paragraphs:
-		paragraph_escaped = html.escape(paragraph)
-		text = escape_and_replace(
-			re.escape(paragraph_escaped), 
-			lambda m: f'<p class="highlight-paragraph">{m}</p>', 
-			text
-		)
-
-	for word in words:
-		word_escaped = html.escape(word)
-		text = escape_and_replace(
-			rf'\b{re.escape(word_escaped)}\b', 
-			lambda m: f'<mark class="highlight-word" data-term="{m}">{m}</mark>', 
-			text
-		)
-
-	return text
 
 def get_response(text):
 	with open(r"home/prompts/key_content.txt", "r", encoding="utf-8") as file:
@@ -63,9 +88,9 @@ def get_response(text):
 		generation_config=generation_config,
 		system_instruction=instructions,
 	)
-	
+
 	try:
-		response = model.generate_content(text)
+		response = model.generate_content(remove_markdown_with_spacing(text))
 		print(response.text)
 		return highlight_content(original_text=text, json_response=response.text)
 	except:
