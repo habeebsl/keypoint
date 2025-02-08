@@ -18,9 +18,11 @@ generation_config = {
 
 md = markdown.Markdown()
 
+PARSER = 'html.parser'
+
 def remove_markdown_with_spacing(text):
     html = markdown.markdown(text)
-    soup = BeautifulSoup(html, "html.parser")  
+    soup = BeautifulSoup(html, PARSER)  
     for element in soup.find_all(['p', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
         element.insert_before("\n")
         element.insert_after("\n")
@@ -28,7 +30,7 @@ def remove_markdown_with_spacing(text):
     return soup.get_text()
 
 def escape_and_replace_in_html(pattern, replacement_func, html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, PARSER)
     text_nodes = soup.find_all(text=True)
     
     for text_node in text_nodes:
@@ -41,7 +43,7 @@ def escape_and_replace_in_html(pattern, replacement_func, html_content):
 
         new_text = re.sub(pattern, replacement_func, original_text)
         if new_text != original_text:
-            text_node.replace_with(BeautifulSoup(new_text, 'html.parser'))
+            text_node.replace_with(BeautifulSoup(new_text, PARSER))
     
     return str(soup)
     
@@ -49,7 +51,6 @@ def escape_and_replace_in_html(pattern, replacement_func, html_content):
 def highlight_content(original_text, json_response):
     html_text = md.convert(original_text)
     response = json.loads(json_response)
-    soup = BeautifulSoup(html_text, 'html.parser')
     result = html_text
     
     for paragraph in response.get("paragraphs", []):
@@ -80,18 +81,22 @@ def highlight_content(original_text, json_response):
 
 
 def get_response(text):
-	with open(r"home/prompts/key_content.txt", "r", encoding="utf-8") as file:
-		instructions = file.read()
+    with open(r"home/prompts/key_content.txt", "r", encoding="utf-8") as file:
+        instructions = file.read()
 
-	model = genai.GenerativeModel(
-		model_name="gemini-1.5-pro",
-		generation_config=generation_config,
-		system_instruction=instructions,
-	)
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-pro",
+        generation_config=generation_config,
+        system_instruction=instructions,
+    )
 
-	try:
-		response = model.generate_content(remove_markdown_with_spacing(text))
-		print(response.text)
-		return highlight_content(original_text=text, json_response=response.text)
-	except:
-		return None
+    try:
+        response = model.generate_content(remove_markdown_with_spacing(text))
+        print(response.text)
+        return highlight_content(original_text=text, json_response=response.text)
+    except genai.GenerativeModelError as e:
+        print(f"Error generating content: {e}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return None

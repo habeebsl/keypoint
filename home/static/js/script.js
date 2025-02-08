@@ -186,7 +186,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event Listeners
     messageInput.addEventListener("input", adjustTextareaHeight);
 
-    highlightButton.addEventListener("click", sendMessage);
+    highlightButton.addEventListener("click", async () => {
+        sendMessage()
+    });
 
     messageInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter" && !highlightButton.disabled) {

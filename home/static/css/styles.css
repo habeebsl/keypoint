@@ -108,7 +108,6 @@ body {
 }
 
 mark.highlight-word {
-    /* border-bottom: 1px dotted gray; */
     color: var(--color-accent);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -120,7 +119,6 @@ mark.highlight-word:hover {
     border-radius: 4px;
     font-weight: 600;
     border-bottom: none;
-    /* animation: pulse 0.5s infinite alternate; */
 }
 
 mark {
@@ -128,7 +126,6 @@ mark {
     color: var(--color-accent);
     padding: 0px 4px;
     border-radius: 4px;
-    /* cursor: help; */
     font-weight: 500;
 }
 
