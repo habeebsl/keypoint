@@ -4,9 +4,10 @@ import re
 import markdown
 from decouple import config
 from bs4 import BeautifulSoup
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-genai.configure(api_key=config('GEMINI_API_KEY'))
+client = genai.Client(api_key=config("GEMINI_API_KEY"))
 
 generation_config = {
   "temperature": 1,
@@ -84,19 +85,26 @@ def get_response(text):
     with open(r"home/prompts/key_content.txt", "r", encoding="utf-8") as file:
         instructions = file.read()
 
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
-        generation_config=generation_config,
-        system_instruction=instructions,
-    )
-
     try:
-        response = model.generate_content(remove_markdown_with_spacing(text))
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                system_instruction=instructions
+            ),
+            contents=remove_markdown_with_spacing(text)
+        )
+
         print(response.text)
         return highlight_content(original_text=text, json_response=response.text)
-    except genai.GenerativeModelError as e:
-        print(f"Error generating content: {e}")
-        return None
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
+
+
+if __name__ == "__main__":
+    text = """
+    """
+
+    response = get_response(text)
+    print(response)
