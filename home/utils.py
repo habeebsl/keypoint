@@ -31,6 +31,16 @@ def remove_markdown_with_spacing(text):
     return soup.get_text()
 
 def escape_and_replace_in_html(pattern, replacement_func, html_content):
+    """
+    Safely replaces text matching the given pattern in HTML content outside <code> and <pre> tags.
+
+    Args:
+        pattern (str): Regex pattern to search for.
+        replacement_func (callable): Function to generate replacement from a regex match.
+        html_content (str): HTML content string.
+    Returns:
+        str: Updated HTML content string.
+    """
     soup = BeautifulSoup(html_content, PARSER)
     text_nodes = soup.find_all(string=True)  # Updated as 'text' is deprecated, use 'string' instead
     
@@ -108,4 +118,5 @@ if __name__ == "__main__":
 
     response = get_response(text)
     print(response)
+    
     
