@@ -100,11 +100,3 @@ def get_response(text):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
-
-
-if __name__ == "__main__":
-    text = """
-    """
-
-    response = get_response(text)
-    print(response)
