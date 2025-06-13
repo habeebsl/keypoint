@@ -1,12 +1,10 @@
 import json
-
+from decouple import config
 from django.shortcuts import render
 from django.http import JsonResponse
 
 from .utils import get_response
 import wikipediaapi
-
-# Create your views here.
 
 def home_view(request):
     if not request.session.get("last_highlight", ""):
@@ -30,15 +28,13 @@ def get_tooltip_data(request):
     data = request.GET.get("term", "")
     print(data)
     wiki = wikipediaapi.Wikipedia(
-        user_agent="KeyPoint/1.0 (habeebomotolani2007@gmail.com)",
+        user_agent=f"KeyPoint/1.0 ({config('EMAIL')})",
         language='en')
     page = wiki.page(data)
 
     if page.exists():
         summary = page.summary[0:500]
         link = page.fullurl
-        print(summary)
-        print("link: ", link)
         return JsonResponse({
             "summary": summary,
             "link": link
