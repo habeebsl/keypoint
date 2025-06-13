@@ -32,7 +32,7 @@ def remove_markdown_with_spacing(text):
 
 def escape_and_replace_in_html(pattern, replacement_func, html_content):
     soup = BeautifulSoup(html_content, PARSER)
-    text_nodes = soup.find_all(string=True)  # Updated as 'text' is deprecated, use 'string' instead
+    text_nodes = soup.find_all(string=True)
     
     for text_node in text_nodes:
         if text_node.parent.name in ['code', 'pre']:
@@ -100,12 +100,3 @@ def get_response(text):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
-
-
-if __name__ == "__main__":
-    text = """
-    """
-
-    response = get_response(text)
-    print(response)
-    
