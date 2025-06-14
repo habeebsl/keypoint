@@ -53,7 +53,7 @@ def escape_and_replace_in_html(pattern, replacement_func, html_content):
 
         new_text = re.sub(pattern, replacement_func, original_text)
         if new_text != original_text:
-            text_node.replace_with(BeautifulSoup(new_text, PARSER))
+            text_node.replace_with(new_text)
     
     return str(soup)
     
@@ -110,4 +110,5 @@ def get_response(text):
         print(f"Unexpected error: {e}")
         return None
 
+    
     
