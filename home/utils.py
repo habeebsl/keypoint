@@ -22,6 +22,15 @@ md = markdown.Markdown()
 PARSER = 'html.parser'
 
 def remove_markdown_with_spacing(text):
+    """
+    Converts Markdown text to plain text with spacing between paragraphs, lists, and headers.
+
+    Args:
+        text (str): Markdown formatted text.
+
+    Returns:
+        str: Plain text with extra newlines for paragraph/section separation.
+    """
     html = markdown.markdown(text)
     soup = BeautifulSoup(html, PARSER)  
     for element in soup.find_all(['p', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
@@ -44,7 +53,7 @@ def escape_and_replace_in_html(pattern, replacement_func, html_content):
 
         new_text = re.sub(pattern, replacement_func, original_text)
         if new_text != original_text:
-            text_node.replace_with(BeautifulSoup(new_text, PARSER))
+            text_node.replace_with(new_text)
     
     return str(soup)
     
@@ -100,3 +109,6 @@ def get_response(text):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
+
+    
+    
