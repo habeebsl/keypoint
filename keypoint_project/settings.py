@@ -86,7 +86,10 @@ WSGI_APPLICATION = 'keypoint_project.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL')
+        default=config('DATABASE_URL'),
+        conn_max_age=0,
+        ssl_require=True
+
     )
 }
 
