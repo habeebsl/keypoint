@@ -1,5 +1,6 @@
 import json
 from decouple import config
+from django.utils.safestring import mark_safe
 from django.shortcuts import render
 from django.http import JsonResponse
 
@@ -18,11 +19,11 @@ def get_highlighted_text(request):
         text = data.get("message", "")
         if text:
             response = get_response(text)
-            print(response)
+            print(mark_safe(response))
             if not response:
                 return JsonResponse({"error": True})
-            request.session["last_highlight"] = response
-            return JsonResponse({"highlight": response})
+            request.session["last_highlight"] = mark_safe(response)
+            return JsonResponse({"highlight": mark_safe(response)})
         
 def get_tooltip_data(request):
     data = request.GET.get("term", "")

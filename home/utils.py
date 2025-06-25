@@ -42,7 +42,7 @@ def remove_markdown_with_spacing(text):
 def escape_and_replace_in_html(pattern, replacement_func, html_content):
     soup = BeautifulSoup(html_content, PARSER)
     text_nodes = soup.find_all(string=True)
-    
+
     for text_node in text_nodes:
         if text_node.parent.name in ['code', 'pre']:
             continue
@@ -52,11 +52,12 @@ def escape_and_replace_in_html(pattern, replacement_func, html_content):
             continue
 
         new_text = re.sub(pattern, replacement_func, original_text)
+
         if new_text != original_text:
-            text_node.replace_with(new_text)
-    
+            new_html = BeautifulSoup(new_text, PARSER)
+            text_node.replace_with(new_html)
+
     return str(soup)
-    
 
 def highlight_content(original_text, json_response):
     html_text = md.convert(original_text)
